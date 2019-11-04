@@ -780,8 +780,8 @@ class ApiInstance:
         """
         Get transaction information via the specified address between the specified startBlockNo and endBlockNo on certain chain.
         Comments:
-             if no startBlockNo given, startBlockNo will be set to 0;
-             if no endBlockNo given, endBlockNo will be set to the newest blockNumber.
+        if no startBlockNo given, startBlockNo will be set to 0;
+        if no endBlockNo given, endBlockNo will be set to the newest blockNumber.
         :param address:The account's address that you want to search.
         :param start_block_number:The startBlockNo that you want to search from.
         :param end_block_number:The endBlockNo that you want to search to.
