@@ -649,7 +649,7 @@ class ApiInstance:
         response = json.loads(self._make_request(message))
         return response['result']
 
-    def get_validator_total_incentive(self, address, from_epoch, to_epoch, chain_type='WAN'):
+    def get_validator_total_incentive(self, address, from_epoch=None, to_epoch=None, chain_type='WAN'):
         """
         Get the specified validator's total incentives.
         :param address:The validator address you want to search.
@@ -843,7 +843,7 @@ class ApiInstance:
         """
         message = self._new_message("getTxInfo", chain_type)
         message['params']['txHash'] = tx_hash
-        if format is not None:
+        if out_format is not None:
             message['params']['format'] = out_format
         response = json.loads(self._make_request(message))
         return response['result']
