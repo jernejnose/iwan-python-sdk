@@ -18,3 +18,6 @@ testApi = api.ApiInstance(YOUR_API_KEY, YOUR_SECRET_KEY)
 #by default it connects to 'wss://api.wanchain.org:8443/ws/v3/', you can change that by defining uri parameter
 testApi.get_balance("0x2cc79fa3b80c5b9b02051facd02478ea88a78e2c")
 ```
+
+## Notes
+* Documentation and tests are yet to be implemented.
