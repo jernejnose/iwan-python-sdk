@@ -39,6 +39,7 @@ class ApiInstance:
         message['params']['timestamp'] = timestamp()
         message['params']['signature'] = self._make_signature(message)
         str_msg = json.dumps(message, separators=(',', ':'))
+
         async def send():
             async with websockets.connect(self.endpoint) as websocket:
                 await websocket.send(str_msg)

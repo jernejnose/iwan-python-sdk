@@ -21,3 +21,6 @@ testApi.get_balance("0x2cc79fa3b80c5b9b02051facd02478ea88a78e2c")
 
 ## Notes
 * Documentation and tests are yet to be implemented.
+
+## License
+[MIT](https://github.com/jernejnose/iwan-python-sdk/blob/master/LICENSE)
