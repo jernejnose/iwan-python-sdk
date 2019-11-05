@@ -38,15 +38,11 @@ class ApiInstance:
     def _make_request(self, message):
         message['params']['timestamp'] = timestamp()
         message['params']['signature'] = self._make_signature(message)
-
         str_msg = json.dumps(message, separators=(',', ':'))
-        print(str_msg)
-
         async def send():
             async with websockets.connect(self.endpoint) as websocket:
                 await websocket.send(str_msg)
                 return await websocket.recv()
-
         return asyncio.get_event_loop().run_until_complete(send())
 
     # Accounts methods #
@@ -55,7 +51,7 @@ class ApiInstance:
         Get balance for a single address.
         :param address: The account being queried.
         :param chain_type: The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getBalance", chain_type)
         message['params']['address'] = str(address)
@@ -67,7 +63,7 @@ class ApiInstance:
         Get balance for multiple Addresses in a single call.
         :param addresses: An array of addresses being queried.
         :param chain_type: The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getMultiBalances", chain_type)
         message['params']['address'] = addresses
@@ -79,7 +75,7 @@ class ApiInstance:
         Get the nonce of an account.
         :param address: The account being queried.
         :param chain_type: The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getNonce", chain_type)
         message['params']['address'] = address
@@ -91,7 +87,7 @@ class ApiInstance:
         Get the pending nonce of an account.
         :param address: The account being queried.
         :param chain_type: The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getNonceIncludePending", chain_type)
         message['params']['address'] = address
@@ -105,7 +101,7 @@ class ApiInstance:
         :param minconf: The min confirm number of BTC UTXO, usually 0.
         :param maxconf: The max confirm number of BTC UTXO, usually the confirmed blocks you want to wait for the utxo.
         :param chain_type: The chain being queried. Currently supports "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getUTXO", chain_type)
         message['params']['address'] = address
@@ -119,7 +115,7 @@ class ApiInstance:
         Send a import address command to BTC.
         :param address: The BTC account address you want to import to the node to scan transactions.
         :param chain_type: The chain being queried. Currently supports "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("importAddress", chain_type)
         message['params']['address'] = address
@@ -132,7 +128,7 @@ class ApiInstance:
         Get the block information about a block by block hash on certain chain.
         :param block_hash: The blockHash you want to search.
         :param chain_type: The chain being queried. Currently supports "WAN" or "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getBlockByHash", chain_type)
         message['params']['blockNumber'] = block_hash
@@ -144,7 +140,7 @@ class ApiInstance:
         Get the block information about a block by block number on certain chain.
         :param block_number:The blockNumber you want to search.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getBlockByNumber", chain_type)
         message['params']['blockNumber'] = block_number
@@ -155,7 +151,7 @@ class ApiInstance:
         """
         Get the current latest block number.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH" or "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getBlockNumber", chain_type)
         response = json.loads(self._make_request(message))
@@ -167,7 +163,7 @@ class ApiInstance:
         :param block_number:The blockNumber you want to search.
         :param block_hash:The blockHash you want to search.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getBlockTransactionCount", chain_type)
         if block_number is not None:
@@ -186,7 +182,7 @@ class ApiInstance:
         :param args:The parameters array a of the specific contract public function.
         :param abi:The abi of the specific contract.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("callScFunc", chain_type)
         message['params']['scAddr'] = sc_addr
@@ -204,7 +200,7 @@ class ApiInstance:
         :param key:The key of parameter of the specific contract public map.
         :param abi:The abi of the specific contract.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getScMap", chain_type)
         message['params']['scAddr'] = sc_addr
@@ -221,7 +217,7 @@ class ApiInstance:
         :param name:The name of the specific contract public map.
         :param abi:The abi of the specific contract.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getScVar", chain_type)
         message['params']['scAddr'] = sc_addr
@@ -235,7 +231,7 @@ class ApiInstance:
         """
         Coin exchange ratio,such as 1 ETH to 880 WANs in ICO period, the precision is 10000, the ratio is 880*precision = 880,0000. The ratio would be changed according to the market value ratio periodically.
         :param cross_chain:The cross-chain native coin name that you want to search, should be "ETH" or "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getCoin2WanRatio")
         message['params']['crossChain'] = cross_chain
@@ -246,7 +242,7 @@ class ApiInstance:
         """
         Get the information of tokens which are supported for cross-chain ability.
         :param cross_chain: The cross-chain name that you want to search, should be "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getRegTokens")
         message['params']['crossChain'] = cross_chain
@@ -257,7 +253,7 @@ class ApiInstance:
         """
         Get the detailed cross-chain storemanGroup info for one cross-chain native coin, like the quota, etc.
         :param cross_chain:The cross-chain name that you want to search, should be "ETH" or "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getStoremanGroups")
         message['params']['crossChain'] = cross_chain
@@ -269,7 +265,7 @@ class ApiInstance:
         Token exchange ratio,such as 1 token to 880 WANs, the precision is 10000, the ratio is 880*precision = 880,0000. The ratio would be changed accoring to the market value ratio periodically.
         :param token_sc_address:The token contract address for the specified token.
         :param cross_chain:The cross-chain name that you want to search, should be "ETH".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getToken2WanRatio")
         message['params']['crossChain'] = cross_chain
@@ -293,7 +289,7 @@ class ApiInstance:
         :param from_block:The number of the earliest block (latest may be given to mean the most recent, block). By default 0.
         :param to_block:The number of the latest block (latest may be given to mean the most recent, block). By default latest.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getScEvent", chain_type)
         message['params']['address'] = address
@@ -309,7 +305,7 @@ class ApiInstance:
         :param address:The contract address.
         :param topics:Array of values which must each appear in the log entries. The order is important, if you want to leave topics out use null, e.g. [null, '0x00...'].
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("monitorEvent", chain_type)
         message['params']['address'] = address
@@ -323,7 +319,7 @@ class ApiInstance:
         Get the activity information of the specified epoch. For historical epochs the values are fixed, while the current epoch will update the latest current values in real time.
         :param epoch_id:The chain being queried. Currently supports 'WAN', default: 'WAN'.
         :param chain_type:The epochID you want to search.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getActivity", chain_type)
         message['params']['epochID'] = epoch_id
@@ -334,7 +330,7 @@ class ApiInstance:
         """
         Get the current epoch info.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getCurrentEpochInfo", chain_type)
         response = json.loads(self._make_request(message))
@@ -344,7 +340,7 @@ class ApiInstance:
         """
         Returns an array with information on each of the current validators.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getCurrentStakerInfo", chain_type)
         response = json.loads(self._make_request(message))
@@ -363,7 +359,7 @@ class ApiInstance:
         Get the identified delegator's staking info.
         :param address:The chain being queried. Currently supports 'WAN', default: 'WAN'.
         :param chain_type:The delegator address you want to query.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getDelegatorStakeInfo", chain_type)
         message['params']['address'] = address
@@ -375,7 +371,7 @@ class ApiInstance:
         Get the specified delegator's supplementary information.
         :param address: The delegator's address you want to query.
         :param chain_type: The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getDelegatorSupStakeInfo", chain_type)
         message['params']['address'] = address
@@ -391,7 +387,7 @@ class ApiInstance:
         :param from_epoch:The starting epochID you want to query.
         :param to_epoch:The ending epochID you want to query.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getDelegatorTotalIncentive", chain_type)
         message['params']['address'] = address
@@ -414,7 +410,7 @@ class ApiInstance:
         Calculates the Epoch ID according to the time. Enter the UTC time in seconds to get the corresponding Epoch ID.
         :param query_time:The chain being queried. Currently supports 'WAN', default: 'WAN'.
         :param chain_type:The UTC time seconds you want to query.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getEpochIDByTime", chain_type)
         message['params']['time'] = query_time
@@ -426,7 +422,7 @@ class ApiInstance:
         Get the block number which contains the incentives transactions for the specified epoch.
         :param epoch_id:The epochID you want to query.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getEpochIncentiveBlockNumber", chain_type)
         message['params']['epochID'] = epoch_id
@@ -438,7 +434,7 @@ class ApiInstance:
         Get the reward information of the specified epoch, enter epochID, and reward payment details (including RNP reward, EL reward and chunk reward) will be returned for all the verification nodes and clients working in the epoch.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getEpochIncentivePayDetail", chain_type)
         message['params']['epochID'] = epoch_id
@@ -450,7 +446,7 @@ class ApiInstance:
         Get the public key list of the epoch leaders of the specified EpochID with the input parameter as EpochID.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getEpochLeadersByEpochID", chain_type)
         message['params']['epochID'] = epoch_id
@@ -462,7 +458,7 @@ class ApiInstance:
         Get the record of stake out transactions for the specified epoch.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getEpochStakeOut", chain_type)
         message['params']['epochID'] = epoch_id
@@ -474,7 +470,7 @@ class ApiInstance:
         Get the Epoch Leader and Random Number Proposer addresses and public key lists in the specified epoch.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getLeaderGroupByEpochID", chain_type)
         message['params']['epochID'] = epoch_id
@@ -486,7 +482,7 @@ class ApiInstance:
         Get the highest block number of the specified epoch ID(s).
         :param epoch_id: The epochID(s) you want to query. Can be number or array of numbers.
         :param chain_type: The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("ime", chain_type)
         message['params']['epochID'] = epoch_id
@@ -497,7 +493,7 @@ class ApiInstance:
         """
         Get the current highest stable block number (no rollback).
         :param chain_type: The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getMaxStableBlkNumber", chain_type)
         response = json.loads(self._make_request(message))
@@ -507,7 +503,7 @@ class ApiInstance:
         """
         Returns the epoch ID and block number when the switch from POW to the POS protocol occurred.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getPosInfo", chain_type)
         response = json.loads(self._make_request(message))
@@ -519,7 +515,7 @@ class ApiInstance:
         :param epoch_id:The epochID you want to search.
         :param block_number:The blockNumber you want to search. If blockNumber is -1, use the latest block.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getRandom", chain_type)
         message['params']['epochID'] = epoch_id
@@ -532,7 +528,7 @@ class ApiInstance:
         Gets Random Number Proposer public keys of the specified epoch.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getRandomProposersByEpochID", chain_type)
         message['params']['epochID'] = epoch_id
@@ -544,7 +540,7 @@ class ApiInstance:
         Get the slot leader activity information of the specified epoch.
         :param epoch_id: The epochID you want to search.
         :param chain_type: The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getSlotActivity", chain_type)
         message['params']['epochID'] = epoch_id
@@ -555,7 +551,7 @@ class ApiInstance:
         """
         Returns the total number of slots in an epoch. This is a constant.
         :param chain_type: The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getSlotCount", chain_type)
         response = json.loads(self._make_request(message))
@@ -565,7 +561,7 @@ class ApiInstance:
         """
         Get the current epoch slot ID.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getSlotID", chain_type)
         response = json.loads(self._make_request(message))
@@ -575,7 +571,7 @@ class ApiInstance:
         """
         Get the time span of a slot in seconds.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getSlotTime", chain_type)
         response = json.loads(self._make_request(message))
@@ -586,7 +582,7 @@ class ApiInstance:
         Returns an array of validator information for all validators in the specified block number.
         :param block_number:The blockNumber you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getStakerInfo", chain_type)
         message['params']['blockNumber'] = block_number
@@ -598,7 +594,7 @@ class ApiInstance:
         Returns the specified epoch's start time in UTC time seconds.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTimeByEpochID", chain_type)
         message['params']['epochID'] = epoch_id
@@ -610,7 +606,7 @@ class ApiInstance:
         Get the validator activity information of the Epoch Leaders and Random Number Proposers of the specified epoch. Returns null for the current Epoch or future Epochs.
         :param epoch_id:The epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getValidatorActivity", chain_type)
         message['params']['epochID'] = epoch_id
@@ -622,7 +618,7 @@ class ApiInstance:
         Get the specified validator info by the validator address.
         :param address:The validator address you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getValidatorInfo", chain_type)
         message['params']['address'] = address
@@ -634,7 +630,7 @@ class ApiInstance:
         Get the specified validator staking info by the validator owner's address.
         :param address:The validator owner address you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getValidatorStakeInfo", chain_type)
         message['params']['address'] = address
@@ -646,7 +642,7 @@ class ApiInstance:
         Get supplementary information for the specified validator.
         :param address:The validator address you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getValidatorSupStakeInfo", chain_type)
         message['params']['address'] = address
@@ -660,7 +656,7 @@ class ApiInstance:
         :param from_epoch:The begin epochID you want to search.
         :param to_epoch:The end epochID you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getValidatorTotalIncentive", chain_type)
         message['params']['address'] = address
@@ -676,7 +672,7 @@ class ApiInstance:
         """
         Get the current gas price in wei as bigNumber type.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getGasPrice", chain_type)
         response = json.loads(self._make_request(message))
@@ -689,7 +685,7 @@ class ApiInstance:
         :param address:An array of addresses being queried.
         :param token_sc_address:The token contract address for specified token. I.e., If chainType is 'WAN', it should be the token address for "WETH" or "WBTC".
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getMultiTokenBalance", chain_type)
         message['params']['address'] = address
@@ -702,7 +698,7 @@ class ApiInstance:
         Get the information for multiple tokens.
         :param token_sc_address_array:The token address array for the tokens that you want to query.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getMultiTokenInfo", chain_type)
         message['params']['tokenScAddrArray'] = token_sc_address_array
@@ -716,7 +712,7 @@ class ApiInstance:
         :param owner_address:The owner address on the specified contract.
         :param spender_address:The spender address on the specified contract.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTokenAllowance", chain_type)
         message['params']['tokenScAddr'] = token_sc_address
@@ -731,7 +727,7 @@ class ApiInstance:
         :param address:The account being queried.
         :param token_sc_address:The token contract address for specified token. I.e., If chainType is 'WAN', it should be the token address for "WETH" or "WBTC".
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTokenBalance", chain_type)
         message['params']['address'] = address
@@ -744,7 +740,7 @@ class ApiInstance:
         Get the info of token contract, like symbol and decimals, on certain chain.
         :param token_sc_address:The token contract address for the specified token.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTokenInfo", chain_type)
         message['params']['tokenScAddr'] = token_sc_address
@@ -756,7 +752,7 @@ class ApiInstance:
         Get total amount of certain token on Wanchain.
         :param token_sc_address:The token contract address for the specified token.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH', default: 'WAN'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTokenSupply", chain_type)
         message['params']['tokenScAddr'] = token_sc_address
@@ -769,7 +765,7 @@ class ApiInstance:
         Get transaction information via the specified address on certain chain.
         :param address:The account's address that you want to search.
         :param chain_type:The chain being queried. Currently supports "WAN".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTransByAddress", chain_type)
         message['params']['address'] = address
@@ -786,7 +782,7 @@ class ApiInstance:
         :param start_block_number:The startBlockNo that you want to search from.
         :param end_block_number:The endBlockNo that you want to search to.
         :param chain_type:The chain being queried. Currently supports "WAN".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTransByAddressBetweenBlocks", chain_type)
         message['params']['address'] = address
@@ -801,7 +797,7 @@ class ApiInstance:
         :param block_number:The blockNumber you want to search.
         :param block_hash:The blockHash you want to search.
         :param chain_type:The chain being queried. Currently supports "WAN".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTransByBlock", chain_type)
         if block_number is not None:
@@ -817,7 +813,7 @@ class ApiInstance:
         :param wait_blocks:The confirm-block-number you want to set.
         :param tx_hash:The txHash you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTransactionConfirm", chain_type)
         message['params']['waitBlocks'] = wait_blocks
@@ -830,7 +826,7 @@ class ApiInstance:
         Get the receipt of a transaction by transaction hash on certain chain.
         :param tx_hash:The txHash you want to search.
         :param chain_type:The chain being queried. Currently supports 'WAN' and 'ETH'.
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTransactionReceipt", chain_type)
         message['params']['txHash'] = tx_hash
@@ -843,7 +839,7 @@ class ApiInstance:
         :param tx_hash:The txHash you want to search.
         :param out_format:Whether to get the serialized or decoded transaction, in this case, chainType should be "BTC": Set to false (the default) to return the serialized transaction as hex. Set to true to return a decoded transaction.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH" or "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("getTxInfo", chain_type)
         message['params']['txHash'] = tx_hash
@@ -857,7 +853,7 @@ class ApiInstance:
         Submit a pre-signed transaction for broadcast to certain chain.
         :param signed_tx:The signedTx you want to send.
         :param chain_type:The chain being queried. Currently supports "WAN" or "ETH" or "BTC".
-        :return:
+        :return: Returns result object from api response.
         """
         message = self._new_message("sendRawTransaction", chain_type)
         message['params']['signedTx'] = signed_tx
